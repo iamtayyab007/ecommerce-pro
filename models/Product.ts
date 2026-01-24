@@ -1,6 +1,4 @@
 import mongoose, { models } from "mongoose";
-import { trim } from "zod";
-import { required } from "zod/mini";
 
 const productSchema = new mongoose.Schema(
   {
@@ -34,7 +32,7 @@ const productSchema = new mongoose.Schema(
       default: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Product =
