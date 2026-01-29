@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCartStore } from "@/store/cart";
+import Image from "next/image";
 
 const ProductList = ({ products }: { products: any[] }) => {
   const { addItem, items } = useCartStore();
@@ -14,7 +15,14 @@ const ProductList = ({ products }: { products: any[] }) => {
         return (
           <div key={item._id} className="border p-4 rounded hover:shadow">
             <Link href={`/products/${item._id}`}>
+              <Image
+                src={`/${item.image}`}
+                alt="image"
+                width={100}
+                height={50}
+              />
               <h2 className="font-semibold text-black">{item.title}</h2>
+
               <p className="text-sm text-gray-500">${item.price}</p>
             </Link>
 

@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { connectDB } from "./db";
 import { User } from "@/models/User";
+import { inngest } from "@/app/inngest/client";
 
 export const authOptions = {
   providers: [
@@ -21,7 +22,10 @@ export const authOptions = {
         if (!user) {
           throw new Error("User not found");
         }
-        const isValid = bcrypt.compare(credentials.password, user.password);
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password,
+        );
 
         if (!isValid) {
           throw new Error("password incorrect");
@@ -41,20 +45,36 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = (user as any).role;
+        token.role = user.role;
+        token.email = user.email;
       }
       return token;
     },
+
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-      }
+      session.user.id = token.id;
+      session.user.role = token.role;
+      session.user.email = token.email;
       return session;
     },
   },
-  pages: {
-    signIn: "/login",
+
+  events: {
+    signIn: async ({ user, isNewUser }) => {
+      console.log("🔥 EVENT FIRED BEFORE INNGEST");
+
+      const res = await inngest.send({
+        name: "user/created",
+        data: {
+          userId: user.id,
+          email: user.email,
+        },
+      });
+
+      console.log("🔥 INNGEST SEND RESULT", res);
+    },
   },
+
+  pages: { signIn: "/login" },
   secret: process.env.NEXTAUTH_SECRET,
 };
