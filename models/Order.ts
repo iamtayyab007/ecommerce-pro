@@ -31,7 +31,7 @@ const OrderSchema = new Schema(
     },
     orderStatus: {
       type: String,
-      enum: ["processing", "shipped", "delivered"],
+      enum: ["processing", "shipped", "delivered", "cancelled"],
       default: "processing",
     },
     stripeSessionId: String,
