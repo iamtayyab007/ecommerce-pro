@@ -35,6 +35,9 @@ const OrderSchema = new Schema(
       default: "processing",
     },
     stripeSessionId: String,
+    paymentIntendId: {
+      type: String,
+    },
   },
   { timestamps: true },
 );
