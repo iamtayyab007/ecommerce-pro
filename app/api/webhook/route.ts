@@ -18,19 +18,21 @@ export const POST = async (req: Request) => {
     );
 
     if (event.type === "checkout.session.completed") {
+      await connectDB();
       const session = event.data.object as any;
-      console.log("session", session);
+      console.log("session", session.payment_intent);
+
       const userId = session.metadata.userId;
       const email = session.customer_details.email;
       const items = JSON.parse(session.metadata.cart);
-      await connectDB();
+
       await Order.create({
         userId,
         items,
         stripeSessionId: session.id,
         totalAmount: session.amount_total / 100,
         paymentStatus: "paid",
-        paymentIntentId:session.payment_intent
+        paymentIntentId: session.payment_intent,
       });
       sendNodemailerEmail({ email }).catch(console.error);
     }

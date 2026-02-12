@@ -14,6 +14,7 @@ export const PATCH = async (
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
     const id = (await params).id;
+
     const { status } = await req.json();
     await connectDB();
     const updateOrder = await Order.findByIdAndUpdate(id, {
